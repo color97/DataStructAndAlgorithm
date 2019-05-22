@@ -6,19 +6,12 @@ class Solution
 public:
     size_t number_of_one(int N)
     {
-        if ( 0 == N )
+        if ( N < 2 )
         {
-            return 0;
+            return N;
         }
         
-        if(N % 2 != 0)
-        {
-            return number_of_one((N - 1) / 2) + 1;
-        }
-        else
-        {
-            return number_of_one( N / 2);
-        }        
+        return number_of_one(N / 2) + N % 2;  
     }
 };
 
