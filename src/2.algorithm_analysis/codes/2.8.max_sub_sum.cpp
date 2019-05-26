@@ -16,8 +16,8 @@ int maxSubSum4( const vector<int>& a)
         else if(thisSum < 0)
         {
             thisSum = 0;
-        }
-        
-        return maxSum;
+        }        
     }
+    
+    return maxSum;
 }
