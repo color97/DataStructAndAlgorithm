@@ -1,3 +1,6 @@
+#ifndef VECTOR_H
+#define VECTOR_H
+
 #include <algorithm>
 
 template<typename Object>
@@ -145,3 +148,5 @@ private:
     int theCapacity;
     Object* objects;
 };
+
+#endif //VCTOR_H
