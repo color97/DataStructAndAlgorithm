@@ -38,7 +38,7 @@ public:
             return *this;
         }
 
-        const_iterator& operator++ (int)
+        const_iterator operator++ (int)
         {
             const_iterator old = *this;
             ++(*this);
@@ -51,7 +51,7 @@ public:
             return *this;
         }
 
-        const_iterator& operator-- (int)
+        const_iterator operator-- (int)
         {
             const_iterator old = *this;
             --(*this);
@@ -115,7 +115,7 @@ public:
             return *this;
         }
 
-        iterator& operator++ (int)
+        iterator operator++ (int)
         {
             iterator old = *this;
             ++(*this);
@@ -128,7 +128,7 @@ public:
             return *this;
         }
 
-        iterator& operator-- (int)
+        iterator operator-- (int)
         {
             iterator old = *this;
             --(*this);
