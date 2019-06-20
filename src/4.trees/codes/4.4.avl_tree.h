@@ -1,5 +1,5 @@
-#ifndef BINARY_SEARCH_TREE_H
-#define BINARY_SEARCH_TREE_H
+#ifndef AVL_TREE_H
+#define AVL_TREE_H
 
 #include <algorithm>
 #include <iostream>
@@ -8,30 +8,30 @@
 using namespace std;
 
 template<typename Comparable>
-class BinarySearchTree
+class AvlTree
 {
 public:
-    BinarySearchTree(): root(nullptr) {}
-    ~BinarySearchTree()
+    AvlTree(): root(nullptr) {}
+    ~AvlTree()
     {
         makeEmpty();
     }
-    BinarySearchTree(const BinarySearchTree& rhs): root{nullptr}
+    AvlTree(const AvlTree& rhs): root{nullptr}
     {
         root = clone(rhs.root);
     }
-    BinarySearchTree(BinarySearchTree&& rhs): root{rhs.root}
+    AvlTree(AvlTree&& rhs): root{rhs.root}
     {
         rhs.root = nullptr;
     }
 
-    BinarySearchTree& operator=(const BinarySearchTree& rhs)
+    AvlTree& operator=(const AvlTree& rhs)
     {
-        BinarySearchTree copy = rhs;
+        AvlTree copy = rhs;
         std::swap(*this, copy);
         return *this;
     }
-    BinarySearchTree& operator=(BinarySearchTree& rhs)
+    AvlTree& operator=(AvlTree& rhs)
     {
         std::swap(root, rhs.root);
         return *this;
@@ -84,22 +84,23 @@ public:
     }
 
 private:
-    struct BinaryNode
+    struct AvlNode
     {
-        Comparable element;
-        BinaryNode* left;
-        BinaryNode* right;
+        Comparable  element;
+        AvlNode*    left;
+        AvlNode*    right;
+        int         height;
 
-        BinaryNode(const Comparable& x, BinaryNode* lt, BinaryNode* rt)
-        : element(x), left(lt), right(rt)
+        AvlNode(const Comparable& x, AvlNode* lt, AvlNode* rt, int h = 0)
+        : element(x), left(lt), right(rt), height(h)
         {}
-        BinaryNode(Comparable&& x, BinaryNode* lt, BinaryNode* rt)
-        : element(std::move(x)), left(lt), right(rt)
+        AvlNode(Comparable&& x, AvlNode* lt, AvlNode* rt, int h = 0)
+        : element(std::move(x)), left(lt), right(rt), height(h)
         {}
     };
 
 private:
-    bool contains(const Comparable& x, BinaryNode* t) const
+    bool contains(const Comparable& x, AvlNode* t) const
     {
         if (t == nullptr)
         {
@@ -118,16 +119,16 @@ private:
             return true;
         }     
     }
-    void printTree(BinaryNode* t, ostream& out) const
+    void printTree(AvlNode* t, ostream& out) const
     {
         if( t != nullptr )
         {
             printTree( t->left, out );
-            out << t->element << endl;
+            out <<"element: " << t->element << ", height: " << t->height << endl;
             printTree( t->right, out );
         }
     }
-    BinaryNode* findMin(BinaryNode* t) const
+    AvlNode* findMin(AvlNode* t) const
     {
         if(t == nullptr)
         {
@@ -142,7 +143,7 @@ private:
             return findMin(t->left);
         }        
     }
-    BinaryNode* findMax(BinaryNode* t) const
+    AvlNode* findMax(AvlNode* t) const
     {
         if(t == nullptr)
         {
@@ -157,8 +158,12 @@ private:
             return findMin(t->right);
         }  
     }
+    int height(AvlNode* t) const
+    {
+        return (t == nullptr) ? -1 : t->height;
+    }
 
-    void makeEmpty(BinaryNode*& t)
+    void makeEmpty(AvlNode*& t)
     {
         if (t == nullptr)
         {
@@ -169,11 +174,11 @@ private:
             t = nullptr;    
         }
     }
-    void insert(const Comparable& x, BinaryNode*& t)
+    void insert(const Comparable& x, AvlNode*& t)
     {
         if (t == nullptr)
         {
-            t = new BinaryNode{x, nullptr, nullptr};
+            t = new AvlNode{x, nullptr, nullptr};
         }
         else if (x < t->element)
         {
@@ -182,13 +187,14 @@ private:
         else if ( x > t->element)
         {
             insert(x, t->right);
-        }    
+        }
+        balance(t);
     }
-    void insert(Comparable&& x, BinaryNode*& t)
+    void insert(Comparable&& x, AvlNode*& t)
     {
         if (t == nullptr)
         {
-            t = new BinaryNode{std::move(x), nullptr, nullptr};
+            t = new AvlNode{std::move(x), nullptr, nullptr};
         }
         else if (x < t->element)
         {
@@ -197,9 +203,10 @@ private:
         else if ( x > t->element)
         {
             insert(std::move(x), t->right);
-        }    
+        }   
+        balance(t); 
     }
-    void remove(const Comparable& x, BinaryNode*& t)
+    void remove(const Comparable& x, AvlNode*& t)
     {
         if (t == nullptr)
         {
@@ -220,23 +227,89 @@ private:
         }
         else
         {
-            BinaryNode* old = t;
+            AvlNode* old = t;
             t = t->left != nullptr ? t->left : t->right;
             delete old;
         }
+        balance(t);
     }
 
-    BinaryNode* clone(BinaryNode* t) const
+    AvlNode* clone(AvlNode* t) const
     {
         if(t == nullptr)
         {
             return nullptr;
         }
-        return new BinaryNode{t->element, clone(t->left), clone(t->right)};
+        return new AvlNode{t->element, clone(t->left), clone(t->right), t->height};
+    }
+
+    void balance(AvlNode*& t)
+    {
+        if(nullptr == t)
+        {
+            return;
+        }
+        else if (height(t->left) - height(t->right) > ALLOWED_BALANCE)
+        {
+            if (height(t->left->left) >= height(t->left->right))
+            {
+                rotateWithLeftChild(t);
+            }
+            else
+            {
+                doubleWithLeftChild(t);
+            }
+        }
+        else if (height(t->right) - height(t->left) > ALLOWED_BALANCE)
+        {
+            if (height(t->right->right) >= height(t->right->left))
+            {
+                rotateWithRightChild(t);
+            }
+            else
+            {
+                doubleWithRightChild(t);
+            }  
+        }
+        
+        t->height = max(height(t->left), height(t->right)) + 1;
+    }
+
+    void rotateWithLeftChild(AvlNode*& k2)
+    {
+        AvlNode* k1 = k2->left;
+        k2->left = k1->right;
+        k1->right = k2;
+        k2->height = max(height(k2->left), height(k2->right)) + 1;
+        k1->height = max(height(k1->left), k2->height) + 1;
+        k2 = k1; //set root ptr to new root
+    }
+
+    void rotateWithRightChild(AvlNode*& k1)
+    {
+        AvlNode* k2 = k1->right;
+        k1->right = k2->left;
+        k2->left = k1;
+        k1->height = max(height(k1->left), height(k1->right)) + 1;
+        k2->height = max(k1->height, height(k2->right)) + 1;
+        k1 = k2; //set root ptr to new root
+    }
+
+    void doubleWithLeftChild(AvlNode*& k3)
+    {
+        rotateWithRightChild(k3->left);
+        rotateWithLeftChild(k3);
+    }
+
+    void doubleWithRightChild(AvlNode*& k3)
+    {
+        rotateWithLeftChild(k3->right);
+        rotateWithRightChild(k3);
     }
 
 private:
-    BinaryNode* root;
+    AvlNode* root;
+    static const int ALLOWED_BALANCE = 1;
 };
 
-#endif //BINARY_SEARCH_TREE_H
+#endif //AVL_TREE_H

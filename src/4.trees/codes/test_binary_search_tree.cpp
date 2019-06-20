@@ -16,4 +16,6 @@ int main()
     bst2.remove(6);
 
     bst2.printTree();
+
+    return 0;
 }
