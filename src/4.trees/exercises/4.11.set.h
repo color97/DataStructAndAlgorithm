@@ -18,7 +18,7 @@ private:
         BinaryNode* right;
         BinaryNode* parent;
 
-        BinaryNode(const Comparable& x, BinaryNode* lt, BinaryNode* rt, BinaryNode* prt)
+        BinaryNode(const Comparable& x = Comparable{}, BinaryNode* lt = nullptr, BinaryNode* rt = nullptr, BinaryNode* prt = nullptr)
         : element(x), left(lt), right(rt), parent(prt)
         {}
         BinaryNode(Comparable&& x, BinaryNode* lt, BinaryNode* rt, BinaryNode* prt)
@@ -256,7 +256,11 @@ public:
     }
     bool isEmpty() const
     {
-        return size == 0;
+        return theSize == 0;
+    }
+    size_t size() const
+    {
+        return theSize;
     }
     void printTree(ostream& out = cout) const
     {
@@ -278,6 +282,33 @@ public:
     size_t remove(const Comparable& x)
     {
         return remove(x, root);
+    }
+
+    iterator find(const Comparable& x)
+    {
+        return find(x, root);
+    }
+
+    const_iterator begin() const
+    {
+        BinaryNode* t = findMin(root);
+        return const_iterator{ t };
+    }
+    iterator begin()
+    {
+        BinaryNode* t = findMin(root);
+        return iterator{ t };
+    }
+
+    iterator end()
+    {
+        BinaryNode* t = findMax(root)->right;
+        return iterator{ t };
+    }
+    const_iterator end() const
+    {
+        BinaryNode* t = findMax(root)->right;
+        return const_iterator{ t };
     }
 
 private:
@@ -347,7 +378,7 @@ private:
             makeEmpty(t->left);
             makeEmpty(t->right);
             
-            size--;
+            theSize--;
             delete t;
             t = nullptr;    
         }
@@ -357,16 +388,16 @@ private:
         if (t == nullptr)
         {
             t = new BinaryNode{x, nullptr, nullptr, parent};
-            size++;
+            theSize++;
             return iterator{t};
         }
-        else if (x < t->elements)
+        else if (x < t->element)
         {
             return insert(x, t->left, t);
         }
         else if ( x > t->element)
         {
-            return insert(x, t->rightt);
+            return insert(x, t->right, t);
         }
         // 元素已存在，返回迭代器
         else
@@ -380,7 +411,7 @@ private:
         if (t == nullptr)
         {
             t = new BinaryNode{std::move(x), nullptr, nullptr, prt};
-            size++;
+            theSize++;
             return iterator{t};
         }
         else if (x < t->element)
@@ -419,11 +450,34 @@ private:
         {
             BinaryNode* old = t;
             t = t->left != nullptr ? t->left : t->right;
-            t->parent = old->parent;
+            if (t != nullptr)
+            {
+                t->parent = old->parent;
+            }
             delete old;
-            size--;
+            theSize--;
             return 1;
         }
+    }
+
+    iterator find(const Comparable& x, BinaryNode* t)
+    {
+        if (t == nullptr)
+        {
+            return end();
+        }
+        else if (x < t->element)
+        {
+            return find(x, t->left);
+        }
+        else if ( x > t->element)
+        {
+            return find(x, t->right);
+        }
+        else
+        {
+            return iterator{t};
+        }     
     }
 
     // BinaryNode* clone(BinaryNode* t, BinaryNode* parent) const
@@ -437,6 +491,6 @@ private:
 
 protected:
     BinaryNode* root;
-    int         size;
+    int         theSize;
 };
 #endif //SET_H
