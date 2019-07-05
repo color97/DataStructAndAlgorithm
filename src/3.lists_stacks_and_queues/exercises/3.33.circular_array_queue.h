@@ -9,11 +9,6 @@ class queue
 public:
     queue(int max):array(max), currentSize(0), front(0), back(0)
     {}
-    
-    ~queue()
-    {
-        array.clear();
-    }
 
     void enqueue(const T& x)
     {
