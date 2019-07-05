@@ -1,5 +1,9 @@
 void splice( iterator position, List<T>& lst)
 {
+    position.assertIsValid()
+    if(itr.theList != this)
+        throw std::runtime_error("IteratorMismatchExcetion");
+
     Node* p = position.current;
     p->prev->next = lst.head->next;
     lst.head->next->prev = p->prev;
