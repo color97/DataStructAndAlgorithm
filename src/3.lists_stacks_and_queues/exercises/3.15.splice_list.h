@@ -1,6 +1,6 @@
 void splice( iterator position, List<T>& lst)
 {
-    position.assertIsValid()
+    position.assertIsValid();
     if(itr.theList != this)
         throw std::runtime_error("IteratorMismatchExcetion");
 
