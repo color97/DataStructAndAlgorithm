@@ -58,30 +58,20 @@ public:
 
     bool remove(const T& x)
     {
-        Node* lk = head->next;
-        while (lk != nullptr)
+        Node* nodeTrailer = head->next;
+        Node* prevNode = head;
+        while (nodeTrailer != nullptr)
         {
-            if (lk->element == x)
+            if (nodeTrailer->element == x)
             {
-                Node* l = lk->next;
-                // 删除下一个节点
-                if (nullptr != l)
-                {
-                    lk->element = l->element;
-                    lk->next = l->next;
-                    delete l;
-                }
-                else
-                {
-                    delete lk;
-                    lk = nullptr;
-                }
+                prevNode->next = nodeTrailer->next;
+                delete nodeTrailer;
                 theSize--;
-
                 return true;
             }
-            
-            lk = lk->next;
+
+            prevNode = nodeTrailer;
+            nodeTrailer = nodeTrailer->next;
         }
 
         return false;
