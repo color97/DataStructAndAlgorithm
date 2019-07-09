@@ -1,5 +1,7 @@
+#include <algorithm>
+
 #define MINIMAL_M   5
-#define MINIMAL_L   7
+#define MINIMAL_L   3
 #define MAXIMAL_M   2*MINIMAL_M
 #define MAXIMAL_L   2*MINIMAL_L
 
@@ -28,7 +30,7 @@ public:
             else
             {
                 keyValues = new T[MAXIMAL_M - 1];
-                children = new BPlusNode*[MAXIMAL_M]
+                children = new BPlusNode*[MAXIMAL_M];
             }  
         }
 
@@ -59,12 +61,12 @@ public:
 
         void updateKeyValues()
         {
-            if (isLeaf)
+            if (!isLeaf)
             {
                 for (size_t i = 0; i < keyNum; i++)
                 {
                     // i 数据项指代第 i + 1 个子节点中的最小值
-                    keyValues[i] = children[i+1]->minData()
+                    keyValues[i] = children[i+1]->minData();
                 }
             }
         }
@@ -74,9 +76,9 @@ public:
             int i = keyNum - 1;
             if (isLeaf)
             {
-                while(i >= 1 && x < keyValue[i])
+                while(i >= 1 && x < keyValues[i])
                 {
-                    keyValue[i+1] = keyValue[i];
+                    keyValues[i+1] = keyValues[i];
                     i--;
                 }
 
@@ -85,7 +87,7 @@ public:
             }
             else
             {
-                while(i >= 1 && x < keyValue[i])
+                while(i >= 1 && x < keyValues[i])
                 {
                     i--;
                 }
@@ -94,7 +96,7 @@ public:
                 {
                     splitChildNode(i, children[i]);
                     // 分裂子节点后，数据项有变化
-                    if(x > keyValue[i])
+                    if(x > keyValues[i])
                     {
                         i++;
                     }
@@ -114,7 +116,7 @@ public:
             // 拷贝最后 newChild->keyNum 个数据项给 newchild
             for (size_t i = 0; i < newChild->keyNum; i++)
             {
-                newChild->keyValues[i] = childNode->keyValues[childNode->keyNum - newChild->keyNum + i + 1];
+                newChild->keyValues[i] = childNode->keyValues[childNode->keyNum - newChild->keyNum + i];
             }
             
             // 拷贝子节点 newChild->keyNum + 1 个
@@ -122,18 +124,18 @@ public:
             {
                 for (size_t i = 0; i < newChild->keyNum + 1; i++)
                 {
-                    newChild->children[i] = childNode->children[childNode->keyNum - newChild->keyNum + i + 1];
+                    newChild->children[i] = childNode->children[childNode->keyNum - newChild->keyNum + i];
                 }
             }
 
             childNode->keyNum = childNode->keyNum - newChild->keyNum;
             // 移动出位置给新子节点
-            for (size_t i = keyNum; i > index + 1; i)
+            for (size_t i = keyNum; i >= index + 1; i--)
             {
-                children[i + 1] childNode[i];
+                children[i + 1] = children[i];
             }
 
-            children[i + 1] = newChild;
+            children[index + 1] = newChild;
             keyNum++;
 
             updateKeyValues();
@@ -153,8 +155,8 @@ public:
         else if ( root->isFull() )
         {
             BPlusNode* s = new BPlusNode(false);
-
             s->children[0] = root;
+
             s->splitChildNode(0, root);
             s->insertNonFull(x);
             // const int childIndex = s->keyValues[0] < x ? 0 : 1;
