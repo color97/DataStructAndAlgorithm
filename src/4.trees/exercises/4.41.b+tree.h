@@ -59,6 +59,17 @@ public:
             }    
         }
 
+        int findKey(const T& x) const
+        {
+            int retIndex = 0;
+            while (retIndex < keyNum && keyValues[retIndex] < x)
+            {
+                retIndex++;
+            }
+
+            return retIndex;            
+        }
+
         void updateKeyValues()
         {
             if (!isLeaf)
@@ -140,6 +151,36 @@ public:
 
             updateKeyValues();
         }
+
+        void remove( const T& x)
+        {
+            // int keyIndex = findKey(x);
+
+            // if (x == keyValues[keyIndex])
+            // {
+            //     if (isLeaf)
+            //     {
+            //         for (int i = keyIndex; i < keyNum - 1; ++i)
+            //         {
+            //             keyValues[i] = keyValues[i + 1];
+            //         }
+            //         keyNum--;
+            //     }
+            //     else
+            //     {
+            //         BPlusNode* childNext = children[keyIndex + 1];
+            //         if (childNext)
+            //         {
+            //             /* code */
+            //         }
+                    
+            //     }
+                
+            // }
+            
+        }
+
+
     };
 
 public:
@@ -170,6 +211,15 @@ public:
         }
     }
 
+    void remove(const T& x)
+    {
+        if (root == nullptr)
+        {
+            return;
+        }
+        
+        root->remove(x);        
+    }
 
 private:
     BPlusNode* root;
