@@ -1,25 +1,31 @@
-bool isbalance()
+template <typename Comparable>
+struct AvlNode
 {
-    return balance(t->left) && balance(t->right) && balance(t);
-}
+    Comparable  element;
+    AvlNode*    left;
+    AvlNode*    right;
+    int         height;
 
-bool isbalance(AvlNode*& t)
+    AvlNode(const Comparable& x, AvlNode* lt, AvlNode* rt, int h = 0)
+    : element(x), left(lt), right(rt), height(h)
+    {}
+    AvlNode(Comparable&& x, AvlNode* lt, AvlNode* rt, int h = 0)
+    : element(std::move(x)), left(lt), right(rt), height(h)
+    {}
+};
+
+template <typename Comparable>
+bool isBalance(AvlNode<Comparable>* t)
 {
     if(nullptr == t)
     {
         return true;
     }
-    else if (height(t->left) - height(t->right) > 1)
+    
+    if (isBalance(t->left) && isBalance(t->right))
     {
-        return false;
-    }
-    else if (height(t->right) - height(t->left) > 1)
-    {
-        return false;
+        return t->height == max(height(t->left), height(t->right)) + 1;
     }
     
-    if(t->height != max(height(t->left), height(t->right)) + 1 )
-    {
-        return false;
-    }
+    return false;
 }
