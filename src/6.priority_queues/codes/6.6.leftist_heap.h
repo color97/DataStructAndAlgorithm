@@ -116,7 +116,8 @@ private:
         {
             return h1;
         }
-        if (h1->npl < h2->npl)
+        //if (h1->npl < h2->npl)
+        if (h1->element < h2->element)
         {
             return merge1(h1, h2);
         }
