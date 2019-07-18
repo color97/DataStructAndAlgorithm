@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <functional>
+#include <stack>
 
 using namespace std;
 
@@ -115,7 +116,7 @@ void leastBoxB(const vector<int>& itemWeights)
 void leastBoxC(const vector<int>& itemWeights)
 {
     priority_queue<Box, vector<Box>, greater<Box>> BoxesHeap;
-    queue<Box> boxStash;
+    stack<Box> boxStash;
     for (size_t i = 0; i < itemWeights.size(); i++)
     {
         
@@ -142,14 +143,19 @@ void leastBoxC(const vector<int>& itemWeights)
             BoxesHeap.push(std::move(box));
         }
 
-        while (!boxStash.empty())
+        // 当栈顶box没有空间时，不再出栈
+        while (!boxStash.empty() && boxStash.top().slack > 0)
         {
-            BoxesHeap.push(boxStash.front());
+            BoxesHeap.push(boxStash.top());
             boxStash.pop();
         }
     }
 
     cout<< "leastBoxC process over."<<endl;
+    for (; !boxStash.empty(); boxStash.pop())
+    {
+        boxStash.top().printBoxInfo();
+    }
     for (; !BoxesHeap.empty(); BoxesHeap.pop())
     {
         BoxesHeap.top().printBoxInfo();
