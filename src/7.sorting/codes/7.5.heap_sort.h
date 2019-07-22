@@ -11,7 +11,7 @@ template <typename T>
 void heapSort(vector<T>& a)
 {
     // build heap
-    for(int i = a.size() / 2 - 1; i >= 0; i++)
+    for(int i = a.size() / 2 - 1; i >= 0; i--)
     {
         percolateDown(a, i, a.size());
     }
