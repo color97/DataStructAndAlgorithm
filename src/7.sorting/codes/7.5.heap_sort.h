@@ -5,18 +5,21 @@
 using namespace std;
 
 template <typename T>
+void percolateDown(vector<T>& a, int hole, int n);
+
+template <typename T>
 void heapSort(vector<T>& a)
 {
     // build heap
     for(int i = a.size() / 2 - 1; i >= 0; i++)
     {
-        percolateDown(i);
+        percolateDown(a, i, a.size());
     }
 
     // while deleteMax
     for(int j = a.size() - 1; j >= 0; j--)
     {
-        std::swap(a[0], a[j])
+        std::swap(a[0], a[j]);
         percolateDown(a, 0, j);
     }
 }
@@ -26,7 +29,7 @@ void heapSort(vector<T>& a)
 // the items at positions 1 through d are its children, the next d^2 items are its grandchildren, etc. 
 // Thus, the parent of the item at position i (for any i > 0) is the item at position ⌊(i − 1)/d⌋ 
 // and its children are the items at positions di + 1 through di + d. 
-int getLeftChild(int i)
+inline int getLeftChild(int i)
 {
     return i * 2 + 1;
 }
