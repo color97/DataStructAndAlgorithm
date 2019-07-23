@@ -63,7 +63,7 @@ void merge(vector<T>& a, vector<T>& tmpArray, int leftPos, int rightPos, int rig
     }
 
     // 将 tmpArray 复制回原数组 a
-    for (size_t i = (rightEnd - numElements + 1); i  < numElements; ++i)
+    for (size_t i = (rightEnd - numElements + 1); i <= rightEnd; ++i)
     {
         a[i] = std::move(tmpArray[i]);
     }

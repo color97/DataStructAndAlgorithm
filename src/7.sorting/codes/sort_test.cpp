@@ -5,6 +5,7 @@
 #include "src/7.sorting/codes/7.4.shell_sort.h"
 #include "src/7.sorting/codes/7.5.heap_sort.h"
 #include "src/7.sorting/codes/7.6.merge_sort.h"
+#include "src/7.sorting/codes/7.7.quick_sort.h"
 
 using namespace std;
 
@@ -48,6 +49,11 @@ int main()
     testData = originData;
     mergeSort(testData);
     cout<< "mergeSort: "<<endl;
+    printVector(testData);
+
+    testData = originData;
+    quickSort(testData);
+    cout<< "quickSort: "<<endl;
     printVector(testData);
 
     return 0;
