@@ -36,3 +36,10 @@ although there is an O(N2) worst case if very bad random numbers come up
 d. 一般来说都是 O(NlogN)。
 但是当序列为: 1, 2, 4, ..., 2^(k-1)时，平均值造成不均匀的分组。O(N^2)
 
+33. 有 N 个树叶的决策树，深度至少为 ⌈ logN ⌉ ？
+
+37. 唔知
+
+41. 
+a. ⌈ log4! ⌉ = ⌈ log24 ⌉ = 5
+b. 归并排序
